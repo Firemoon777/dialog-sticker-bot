@@ -1,6 +1,6 @@
 from io import BytesIO
 
-from telegram import Update, UserProfilePhotos, File
+from telegram import Update, UserProfilePhotos, File, StickerSet
 from telegram.error import BadRequest
 from telegram.ext import CallbackContext
 
@@ -26,14 +26,14 @@ def on_message_received(update: Update, context: CallbackContext):
     bio.seek(0)
 
     try:
-        sticker_set = context.bot.get_sticker_set(sticker_set_name)
+        sticker_set = context.bot.get_sticker_set(sticker_set_name) # type: StickerSet
         context.bot.add_sticker_to_set(
             user_id=update.message.from_user.id,
             name=sticker_set_name,
             emojis=DEFAULT_EMOJI,
             png_sticker=bio
         )
-        update.message.reply_text("Added")
+        print(f"Upgraded sticker pack {sticker_set_name}")
     except BadRequest:
         created = context.bot.create_new_sticker_set(
             user_id=update.message.from_user.id,
@@ -42,5 +42,7 @@ def on_message_received(update: Update, context: CallbackContext):
             emojis=DEFAULT_EMOJI,
             png_sticker=bio
         )
-        print(created)
-        update.message.reply_text(f"Created: {created}")
+        print(f"Created sticker pack {sticker_set_name}")
+
+    sticker_set = context.bot.get_sticker_set(sticker_set_name)  # type: StickerSet
+    update.message.reply_sticker(sticker_set.stickers[-1])
