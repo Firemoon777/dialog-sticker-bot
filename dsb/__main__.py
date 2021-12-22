@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 import toml
 from dsb.bot import DialogStickerBot
+from .drawer import BubbleDrawer
 from .handlers import handlers
 
 config = toml.load('dsb.toml')
@@ -13,3 +15,4 @@ for h in handlers:
 
 bot.start_polling()
 bot.idle()
+
