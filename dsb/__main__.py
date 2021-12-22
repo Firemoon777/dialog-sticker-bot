@@ -13,6 +13,9 @@ bot = DialogStickerBot(
 for h in handlers:
     bot.dispatcher.add_handler(h)
 
+bot.dispatcher.bot_data = {
+    "name": config["telegram"]["name"]
+}
 bot.start_polling()
 bot.idle()
 
