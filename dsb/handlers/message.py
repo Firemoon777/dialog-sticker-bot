@@ -10,8 +10,6 @@ from dsb.drawer import BubbleDrawer
 
 DEFAULT_EMOJI="\U0001F4AC"  # :speech_balloon:
 
-logger = logging.getLogger(__name__)
-
 
 def on_message_received(update: Update, context: CallbackContext):
     if not update.message.forward_from:
@@ -56,7 +54,10 @@ def on_message_received(update: Update, context: CallbackContext):
             emojis=DEFAULT_EMOJI,
             png_sticker=bio
         )
-    except BadRequest:
+    except BadRequest as e:
+        if e.message != "Stickerset_invalid":
+            logging.error(e.message)
+            return
         # If no sticker set fetched, create new
         created = context.bot.create_new_sticker_set(
             user_id=update.message.from_user.id,
@@ -66,7 +67,7 @@ def on_message_received(update: Update, context: CallbackContext):
             png_sticker=bio
         )
 
-        logger.info(f"Created sticker pack {sticker_set_name}")
+        logging.info(f"Created sticker pack {sticker_set_name}")
 
     sticker_set = context.bot.get_sticker_set(sticker_set_name)  # type: StickerSet
     update.message.reply_sticker(sticker_set.stickers[-1])

@@ -56,6 +56,9 @@ class BubbleDrawer:
         width = 512
         height = font_height * (len(self._text) + 1) + 2*BUBBLE_PADDING
 
+        if height > 512:
+            raise OverflowError("Image too big")
+
         self.img = Image.new('RGBA', (width, height), color=(255, 255, 255, 0))
 
         d = ImageDraw.Draw(self.img)
