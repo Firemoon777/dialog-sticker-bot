@@ -22,20 +22,24 @@ class BubbleDrawer:
         self.avatar = None
 
     @property
-    def _name(self):
-        if self.message["forward_from"]:
+    def _name(self) -> str:
+        try:
             result = self.message["forward_from"]["first_name"]
             if self.message["forward_from"]["last_name"]:
                 result += " " + self.message["forward_from"]["last_name"]
             return result
-        else:
+        except (KeyError, TypeError):
             return self.message["forward_sender_name"]
 
     @property
-    def _text(self):
+    def _shortname(self) -> str:
+        return self._name[0].upper()
+
+    @property
+    def _text(self) -> List[str]:
         return textwrap.wrap(self.message["text"], width=30)
 
-    def set_avatar(self, data):
+    def set_avatar(self, data) -> None:
         # Open original image
         avatar = Image.open(BytesIO(data))  # type: Image.Image
 
@@ -51,7 +55,7 @@ class BubbleDrawer:
         self.avatar = ImageOps.fit(avatar, mask.size, centering=(0.5, 0.5))
         self.avatar.putalpha(mask)
 
-    def draw(self):
+    def draw(self) -> None:
         # Calculate size of sticker
         # width is constant and fixed to 512
         font_height = OPEN_SANS.getsize(self._text[0])[1]
@@ -65,25 +69,45 @@ class BubbleDrawer:
         self.img = Image.new('RGBA', (width, height), color=(255, 255, 255, 0))
 
         d = ImageDraw.Draw(self.img)
+
+        # Draw avatar circle
         if self.avatar:
+            # Image present, just insert it
             self.img.paste(self.avatar, (0, 0))
         else:
-            d.ellipse((0, 0, AVATAR_SIZE, AVATAR_SIZE), fill="blue")
+            # Draw circle
+            d.ellipse((0, 0, AVATAR_SIZE, AVATAR_SIZE), fill=(64, 167, 227, 255))
+
+            position = (
+                (AVATAR_SIZE / 2) - (OPEN_SANS.getsize(self._shortname)[0] / 2),
+                (AVATAR_SIZE / 2) - (OPEN_SANS.getsize(self._shortname)[1] / 2) - 4,
+            )
+            d.text(
+                position,
+                self._shortname,
+                fill="white",
+                font=OPEN_SANS
+            )
+
+        # Draw message bubble
         d.rounded_rectangle((BUBBLE_X_START, 0, width, height), fill="black", radius=BUBBLE_RADIUS)
+
+        # Draw title, a.k.a. name of sender
         d.text((TEXT_X_START, BUBBLE_PADDING), self._name, fill="pink", font=OPEN_SANS)
 
+        # Draw message body
         offset = BUBBLE_PADDING + font_height
         for line in self._text:
             d.text((TEXT_X_START, offset), line, fill="white", font=OPEN_SANS)
             offset += font_height
 
-    def show(self):
+    def show(self) -> None:
         if self.img is None:
             return
 
         self.img.show()
 
-    def save(self, filename):
+    def save(self, filename) -> None:
         if self.img is None:
             return
 
