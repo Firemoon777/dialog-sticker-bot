@@ -18,4 +18,3 @@ bot.dispatcher.bot_data = {
 }
 bot.start_polling()
 bot.idle()
-

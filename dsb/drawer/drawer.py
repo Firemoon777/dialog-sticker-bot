@@ -9,7 +9,7 @@ from telegram import Message
 
 from .const import *
 
-OPEN_SANS = ImageFont.truetype('OpenSans.ttf', 20)
+OPEN_SANS = ImageFont.truetype('OpenSans.ttf', 26)
 
 
 class BubbleDrawer:
@@ -30,7 +30,7 @@ class BubbleDrawer:
 
     @property
     def _text(self):
-        return textwrap.wrap(self.message["text"], width=38)
+        return textwrap.wrap(self.message["text"], width=30)
 
     def set_avatar(self, data):
         # Open original image
