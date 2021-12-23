@@ -38,7 +38,10 @@ def on_message_received(update: Update, context: CallbackContext):
     b = BubbleDrawer(update.message)
 
     # get latest user avatar
-    result = context.bot.get_user_profile_photos(update.message.forward_from.id, limit=1)   # type: UserProfilePhotos
+    result = context.bot.get_user_profile_photos(
+        update.message.forward_from.id,
+        limit=1
+    )   # type: UserProfilePhotos
     if result.total_count > 0:
         # TODO: get smallest suitable userpic
         file = context.bot.get_file(result.photos[0][0].file_id)    # type: File
