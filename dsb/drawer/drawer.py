@@ -23,12 +23,13 @@ class BubbleDrawer:
 
     @property
     def _name(self):
-        if "forward_sender_name" in self.message:
+        if self.message["forward_from"]:
+            result = self.message["forward_from"]["first_name"]
+            if self.message["forward_from"]["last_name"]:
+                result += " " + self.message["forward_from"]["last_name"]
+            return result
+        else:
             return self.message["forward_sender_name"]
-        result = self.message["forward_from"]["first_name"]
-        if self.message["forward_from"]["last_name"]:
-            result += " " + self.message["forward_from"]["last_name"]
-        return result
 
     @property
     def _text(self):
