@@ -20,7 +20,7 @@ def on_message_received(update: Update, context: CallbackContext):
     if update.message.chat_id != update.message.from_user.id:
         return
 
-    if not update.message.forward_from:
+    if not update.message.forward_from and not update.message.forward_sender_name:
         update.message.reply_text("Only forwarded messages supported!")
         return
 
@@ -38,14 +38,17 @@ def on_message_received(update: Update, context: CallbackContext):
     b = BubbleDrawer(update.message)
 
     # get latest user avatar
-    result = context.bot.get_user_profile_photos(
-        update.message.forward_from.id,
-        limit=1
-    )   # type: UserProfilePhotos
-    if result.total_count > 0:
-        # TODO: get smallest suitable userpic
-        file = context.bot.get_file(result.photos[0][0].file_id)    # type: File
-        b.set_avatar(file.download_as_bytearray())
+    # there is no forward_from section if
+    # message's author has hidden account
+    if update.message.forward_from:
+        result = context.bot.get_user_profile_photos(
+            update.message.forward_from.id,
+            limit=1
+        )   # type: UserProfilePhotos
+        if result.total_count > 0:
+            # TODO: get smallest suitable userpic
+            file = context.bot.get_file(result.photos[0][0].file_id)    # type: File
+            b.set_avatar(file.download_as_bytearray())
 
     b.draw()
     b.save(bio)
