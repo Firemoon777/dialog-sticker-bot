@@ -14,7 +14,8 @@ for h in handlers:
     bot.dispatcher.add_handler(h)
 
 bot.dispatcher.bot_data = {
-    "name": config["telegram"]["name"]
+    "name": config["telegram"]["name"],
+    "salt": config["telegram"].get("salt", "")
 }
 bot.start_polling()
 bot.idle()

@@ -1,3 +1,4 @@
 [telegram]
 token = "token"
 name = "someone_bot"
+salt = "super-secret-salt"
