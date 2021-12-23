@@ -27,7 +27,6 @@ python3 -m dsb
 
 ## Limitations
 
-- only forwarded messages supported;
+- only forwarded messages supported by design;
 - one message at time handled (e.g. sequence of messages will be handled as separate messages);
-- no error handling;
-- no configuration for stickerset title;
+- no configuration for sticker set title;
