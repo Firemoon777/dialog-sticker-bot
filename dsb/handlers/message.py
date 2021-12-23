@@ -12,6 +12,14 @@ DEFAULT_EMOJI="\U0001F4AC"  # :speech_balloon:
 
 
 def on_message_received(update: Update, context: CallbackContext):
+    # Ignore another updates
+    if not update.message:
+        return
+
+    # Ignore groups
+    if update.message.chat_id != update.message.from_user.id:
+        return
+
     if not update.message.forward_from:
         update.message.reply_text("Only forwarded messages supported!")
         return
